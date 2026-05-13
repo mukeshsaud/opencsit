@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+.font-antic{
+  font-family: var(--font-antic);
+}
+
+.font-dmsans{
+  font-family: var(--font-dmsans);
+}
+
+.font-manrope{
+  font-family: var(--font-manrope);
+}
