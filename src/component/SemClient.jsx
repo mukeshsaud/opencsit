@@ -3,7 +3,7 @@ import { FaBookMedical } from "react-icons/fa";
 import { FaBookOpen } from "react-icons/fa";
 import Link from "next/link";
 
-export default function Subjects({children}){
+export default function SemClient({children}){
    const subjecttitle=`${children.title}`.replaceAll(" ","-")
     return(
         <Link className="flex flex-col gap-3 h-fit w-[60vw] md:w-[40vw] shadow-[0_0_10px_rgba(0,0,0,0.4)] rounded p-2 cursor-pointer"

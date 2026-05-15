@@ -1,16 +1,11 @@
 "use client";
 import Image from "next/image"
-
 import { MdOutlinePerson2 } from "react-icons/md";
-import { semesters } from "../data/semester";
 import { useState,useRef, useEffect } from "react";
 import Link from "next/link";
 
 
-
-
-
-export default function Header(){
+export default function HeaderClient({semesters}){
     const[clicked,setClicked]=useState(false);
     const dropDownRef=useRef(null)
 
@@ -40,15 +35,15 @@ export default function Header(){
    
     return(<div>
         <div className="flex  h-8 md:h-10 lg:h-15 w-full items-center justify-between   pl-1 md:pl-5 lg:pl-15 pr-1 md:pr-5 lg:pr-15">
-            <div className="flex items-center cursor-pointer">
-                <Image src="/headerlogo1.png" alt="" height={20} width={100} priority className="!h-4 !w-7 md:!w-13 md:!h-8 lg:!w-20 lg:!h-13 hidden md:block lg:block"/>
+            <Link className="flex items-center cursor-pointer" href="/">
+                <Image src="/headerlogo1.png" alt="" height={20} width={100} priority className="md:w-12 md:h-8 lg:w-20 lg:h-12 hidden md:block "/>
                 <div className="text-[#3b63ff] flex flex-col w-10px">
                     <span className={`font-black text-[10px] md:text-base lg:text-2xl `}>Opencsit</span>
                     <span className={`font-antic font-black text-[7px] md:text-xs lg:text-base whitespace-nowrap `}>
                     FREE FOREVERs
                     </span>
                 </div>
-            </div>
+            </Link>
            
             <div className="flex gap-5 items-center  md:gap-7 lg:gap-10 text-base md:text-lg lg:text-xl"> 
                 <div className="cursor-pointer h-20 flex items-center justify-center hover:text-[#0088FF]" 

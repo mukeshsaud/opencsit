@@ -12,21 +12,20 @@ const skeletonArray=[{name:"Syllabus",icon:FiBookOpen},{name:"Notes",icon:LuNote
 export default function Layout({children,params})
 {
   const {sem,subject}= use(params);
-  console.log(sem,'me')
   const pathName=usePathname();
 
     return(
         <div>
-            <div className="flex gap-10 justify-center items-center">
+            <div className="w-full flex justify-center">
+                <div className=" w-fit flex text-xs gap-3 md:text-base md:gap-10 justify-center items-center shadow-[0_0_10px_rgba(0,0,0,0.5)] px-5 py-2 rounded">
                 {skeletonArray.map((skeleton)=>
                 { const Icon=skeleton.icon;
                     const href=`/semester/${sem}/${subject}/${skeleton.name.toLowerCase()}`
-                    const isActive= pathName===href;
+                    const isActive= pathName.startsWith(href);
                     return(
-                        <Link  href={href} key={skeleton.name}
-                            >
-                            
-                            <div className={`flex items-center gap-2 hover:text-[#0088FF] ${isActive ? 'text-[#0088FF]':'text-black'}`}
+                        <Link  href={href} key={skeleton.name} >
+                        
+                            <div className={`flex items-center gap-2 hover:text-[#0088FF] ${isActive ? 'text-[#0088FF] border-b-2':'text-black'}`}
                             >
                                 <span> <Icon /></span>
                                 <span>{skeleton.name}</span>
@@ -37,6 +36,7 @@ export default function Layout({children,params})
                 }
                
                 )}
+                </div>
             </div>
             {children}
         </div>

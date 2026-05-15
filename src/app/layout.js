@@ -1,7 +1,8 @@
 import { DM_Sans,Antic_Didone, Manrope } from "next/font/google";
 import "./globals.css";
 import Footer from "@/component/footer.jsx";
-import Header from "@/component/header.jsx";
+import Header from "@/component/header";
+import Navbar from "@/component/Navbar";
 
 
 
@@ -37,6 +38,7 @@ export default function RootLayout({ children }) {
 
       <body className={`min-h-full flex flex-col ${dmSans.className} gap-5`}>
         <Header />
+           <Navbar />
         {children}
         <Footer />
       </body>
