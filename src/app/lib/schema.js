@@ -1,6 +1,7 @@
 
-import { Many, One, relations } from "drizzle-orm";
-import { integer, pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
+import { Many, One, relations,sql } from "drizzle-orm";
+import { integer, pgEnum, pgTable, serial, text, varchar,check } from "drizzle-orm/pg-core";
+
 
 
 export const semesters=pgTable('semesters',{
@@ -39,6 +40,26 @@ hours:integer('hours'),
 description:text('description')
 })
 
+export const typeEnum=pgEnum('type',['text','image']);
+
+export const questions=pgTable("questions",
+    {
+        id:serial('id').primaryKey(),
+        coursecode:varchar('course_code').notNull().references(()=>subjects.code,{onDelete:'cascade'}),
+        year:integer('year').notNull(),
+        qno:integer('q_no').notNull(),
+        content:text('content').notNull(),
+        type: typeEnum('type').notNull().default('text'),
+        src:text('src'),
+    },(table)=>[
+        check('src_check',sql`(${table.type}='image' AND ${table.src} IS NOT NULL) OR (${table.type}='text' AND ${table.src} IS NULL)`)
+        ]
+)
+
+
+ 
+
+
 export const syllabusRelations= relations(syllabus,({many,one})=>({
 chapters:many(chapters),
 subjects:one(subjects,{
@@ -54,16 +75,27 @@ export const chaptersRelations= relations(chapters,({one})=>({
         references:[syllabus.id]        //pk
     })}))
 
-export const subjectRelations= relations(subjects,({one})=>({
+export const subjectRelations= relations(subjects,({one,many})=>({
 syllabus:one(syllabus),
 semesters:one(semesters,{
     fields:[subjects.semesterfk],
     references:[semesters.id]
-})
+}),
+questions:many(questions) //questions and sub realtion
 }))
 
 export const semesterRelations=relations(semesters,({many})=>({
     subjects:many(subjects)
 }))
 
+
+export const questionRelations= relations(questions,({one})=>({
+subjects:one(subjects,
+    {
+        fields:[questions.coursecode], //fk
+        references:[subjects.code] //pk
+    }
+)
+
+}))
 

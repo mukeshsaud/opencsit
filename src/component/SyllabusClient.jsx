@@ -1,6 +1,6 @@
 import Link from "next/link"
 export default  function SyllabusClient({s,children}){
- console.log(children)
+    
     return(
                         <div key={s.syllabusidfk} className='flex flex-col gap-7 '>
 

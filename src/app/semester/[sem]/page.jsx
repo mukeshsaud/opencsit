@@ -11,10 +11,9 @@ export default async function page({params}){
     const alldata= await getAllData();
     const allsubjects= alldata.map((value)=> value.subjects )
 
-      const filteredSubjects=allsubjects.filter((sub)=> sub.semesters.name===sem)
+    const filteredSubjects=allsubjects.filter((sub)=> sub.semesters.name===sem)
         
-      if (filteredSubjects.length==0)
-        notFound();
+  
 
     return(
         <div className="flex flex-col gap-7">

@@ -1,24 +1,12 @@
 
-import { notFound } from 'next/navigation';
 import SyllabusClient from "@/component/SyllabusClient";
-import { getAllData } from "@/app/lib/data";
+import { getAllData, getSubjectChapters } from "@/app/lib/data";
 
 export default async function page({params}){
-
+const {sem,subject}= await params;
     
-    const syllabus1=await getAllData();
-  
-    const {subject,sem}= await params;
-   
-    const filteredsubject=`${subject.replaceAll("-"," ")}`
-    const filteredSyllabus =syllabus1.filter((s)=> s.subjects.title.toLowerCase()===filteredsubject && s.subjects.semesters.name===sem )
+   const s= await getSubjectChapters(sem,subject);
 
-
-   if(filteredSyllabus.length!==1)
-    {notFound();}   //404
-
-   const s=filteredSyllabus[0];    //final syllabus list of one subject
-  
 
 
     return(

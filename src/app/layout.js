@@ -35,6 +35,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${anticDidone.variable} ${manrope.variable}`}>
+   
 
       <body className={`min-h-full flex flex-col ${dmSans.className} gap-5`}>
         <Header />
