@@ -36,12 +36,7 @@ export const getAllQuestions=unstable_cache(async(coursename)=>{
         with:{
             questions:{
                 orderBy:(questions,{asc})=>[asc(questions.year),asc(questions.qno)],
-            columns:{
-                year:true,
-                qno:true,
-                content:true
-                
-            }},
+            }
         }
 
      })

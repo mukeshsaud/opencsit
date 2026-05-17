@@ -1,35 +1,7 @@
-// import NotesPygLayout from "@/component/NotesPyqLayout"
-
-// export default async function layout({ children, params }) {
-//   const { sem, subject, unit } = await params
-
-//   return (
-//     <>
-//       <script dangerouslySetInnerHTML={{ __html: `
-//         window.MathJax = {
-//           tex: {
-//             inlineMath: [['\\\\(', '\\\\)']],
-//             displayMath: [['\\\\[', '\\\\]']]
-//           },
-//           startup: { typeset: false }
-//         };
-//       `}} />
-//       <script
-//         src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
-//         async
-//       />
 
       
 //           {/* <MathText content="\(\sqrt{3 - x}\)" /> */}
 //        {/* <span ref={ref} className="whitespace-pre-line">{content}</span> */}
-
-    
-//         <NotesPygLayout />
-//         {children}
-//     </>
-//   )
-// }
-
 
 import { getAllData, getAllQuestions } from "@/app/lib/data";
 import { notFound } from "next/navigation";
@@ -51,8 +23,8 @@ export default async function layout({children,params}){
         notFound();
 
     return(
-      
-                 
+        <>
+
                     <NotesPyqLayout 
                     sidebar={<PyqYear years={years}  params={{sem,subject}} />}
                     > 
@@ -60,7 +32,6 @@ export default async function layout({children,params}){
     
                   </NotesPyqLayout>
 
-         
-           
+         </>
     )
 }

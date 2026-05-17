@@ -3,7 +3,7 @@ import "./globals.css";
 import Footer from "@/component/footer.jsx";
 import Header from "@/component/header";
 import Navbar from "@/component/Navbar";
-
+import 'katex/dist/katex.min.css';
 
 
 const dmSans=DM_Sans({

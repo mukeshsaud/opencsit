@@ -1,6 +1,11 @@
 'use client';
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState,useEffect,useRef } from "react";
+import MathContent from "./MathContent";
+import Image from "next/image";
+
+
+
 
 
 export default function PyqContent({questions,children}){
@@ -8,8 +13,7 @@ export default function PyqContent({questions,children}){
     const toggle=(qno)=>setOpen(prev=>({...prev,[qno]:!prev[qno]}))
 {/* <PyqContent questions={questionByyear[year]} children={{coursecode:questions.code,title:questions.title ,sem:sem,year:year}}/> */}
 return(
-    
-
+    <>
 <div key={children.code} className='flex flex-col gap-7 p-5'>
 
          <div className='text-lg md:text-2xl font-bold text-center'>
@@ -52,19 +56,33 @@ return(
              </div>
 
              <div className='flex flex-col gap-7 '>
-                 {questions.map((question)=>
-                 <div key={question.qno} className=' cursor-pointer    ' onClick={()=>toggle(question.qno)}>
+                 {questions.map((question)=>{
+                
+                return( <div key={question.qno} className=' cursor-pointer    ' onClick={()=>toggle(question.qno)}>
                     {question.qno==4 &&
                      <div className="pb-5 hover:text-black">
                         <div className='font-bold text-2xl mb-3 underline text-center '>Section B</div>
                         <span className="font-semibold text-xl">Attempt any EIGHT questions.</span>
                         </div>
                         }
-                     <div className='flex  text-base md:text-lg  justify-between hover:text-red-500' onClick={()=>setOpen(!open)} >
-                        <span className=" flex">
-                         <span>{question.qno}.&nbsp;&nbsp;&nbsp;</span><span >{question.content}</span> 
+                     <div className={`flex  text-base md:text-lg  justify-between hover:text-[#434d55d5]   ${open[question.qno] ? 'text-[#0088FF] hover:text-[#1692ffd5]' : 'text-black'}`} >
+                        <span className=" flex flex-col">
+                            <div className="flex">
+                         <span >{question.qno}.&nbsp;&nbsp;&nbsp;</span>
+
+                         <span><MathContent content={question.content} /></span>
+                         </div>
+                         {
+                            question.type==='image' &&(
+                                <div className="self-center">
+                                    <br/>
+                            <Image src={question.src} width={300} height={250} alt='image'/>
+                           
+                            </div>
+                            )
+                         }
                        </span>
-                       <div><ChevronDown className={`transition-transform duration-300 ${open[question.qno] ? 'rotate-180' : ''}`} /></div>
+                       <div><ChevronDown className={`transition-transform duration-300 ${open[question.qno] ? 'rotate-180 ' : ''}`} /></div>
                      </div>
 
                     {
@@ -74,12 +92,12 @@ return(
                         }
 
                      </div>
-                     )}
+                    )})}
                  </div>
              </div>
      </div>
 </div>
-                  
+    </>              
 )
 }
  {/* <Link className='text-xs md:text-base hover:text-[#058aff]' href={`/semester/${children.sem}/${children.subject}/notes/${chapter.unit}`}>

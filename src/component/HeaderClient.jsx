@@ -55,8 +55,9 @@ export default function HeaderClient({semesters}){
                     <span className="text-[10px] justify-self-center-safe">▼</span>
                     {
                         clicked &&
-                        <div className="fixed rounded   text-[#0088FF] bg-white text-base flex flex-col top-8 md:top-10 lg:top-13 pb-2 pt-1  "
-                        onPointerLeave={handlePointerLeave} onPointerEnter={handlePointerEnter}
+                        <div className="fixed rounded   text-[#0088FF] bg-white text-base flex flex-col top-8 md:top-10 lg:top-13 pb-2 pt-1  
+                        shadow-[0_0_10px_rgba(0,0,0,0.4)] "
+                      
                            onClick={(e) =>{e.stopPropagation(); setClicked(false);} } // prevent bubbling to parent toggle
                         >
                             {

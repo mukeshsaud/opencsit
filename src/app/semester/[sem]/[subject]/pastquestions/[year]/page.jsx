@@ -13,12 +13,10 @@ const {sem,subject,year}=await params;
     
 
     if(!questionByyear[year])  notFound();
-
-    console.log(questionByyear,questions);
-
  
-    return(
+    return(<>
 
         <PyqContent questions={questionByyear[year]} children={{coursecode:questions.code,title:questions.title ,sem:sem,year:year}}/>
+    </>
     )
 }

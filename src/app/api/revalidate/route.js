@@ -6,7 +6,10 @@ export async function GET(request){
     if(secret !==process.env.REVALIDATE_SECRET)
         return Response.json({message:'invalid secret'})
 
-    revalidateTag('all-syllabus-data')
+    revalidateTag('all-syllabus-data');
+    revalidateTag('all-semesters-data');
+    revalidateTag('subjectChapters');
+    revalidateTag('allQuestions');
     return Response.json({message:'revalidated'});
     
 }
