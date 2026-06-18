@@ -6,9 +6,11 @@ import Image from "next/image";
 import { getEditorConfig } from "../../editorConfig";
 
 
+
 export default function PyqContent({questions,children,role,answers}){
     const [open,setOpen]=useState({});
     const [everOpened, setEverOpened] = useState({});
+
     const [edit,setEdit]=useState(
         ()=>Object.fromEntries(questions.map(q=>[q.qno,false]))
     );
@@ -33,7 +35,8 @@ export default function PyqContent({questions,children,role,answers}){
 
     const EditorJS=(await import('@editorjs/editorjs')).default;
     const config=await getEditorConfig({data:{slug:'answer',year:children.year,coursecode:children.coursecode,qno,sem:children.sem}});
-    const existingData=answers[qno-1]?.answer;
+    const existingData=answers.filter((q)=>q.qno===qno)[0]?.answer;
+    console.log(existingData)
 
     editorsRef.current[qno] = new EditorJS({
       holder: `editorjs-${children.coursecode}${children.year}${qno}`, // unique id per question
@@ -55,7 +58,9 @@ const handleSave = async (qno) => {
   })
    
   const data=await res.json();
-  console.log(data);
+  
+
+  console.log(data,"data from pyqcontentsave");
 
   console.log(`course code: ${children.coursecode} year: ${children.year} Q${qno} data:`, blocks,typeof(blocks),'s');
  
@@ -106,21 +111,25 @@ return(
 
              <div className='flex flex-col gap-7 '>
                  {questions.map((question)=>{
-                
+                const match=answers.find((q)=>q.qno===question.qno);
                 return( <div key={question.qno} className=' cursor-pointer    ' >
+
                     {question.qno==4 &&
                      <div className="pb-5 ">
                         <div className='font-bold text-2xl mb-3 underline text-center '>Section B</div>
                         <span className="font-semibold text-xl">Attempt any EIGHT questions.</span>
                         </div>
                         }
-                     <div className={`flex  text-base md:text-lg  justify-between `} >
-                        <span className=" flex flex-col">
-                            <div className="flex" onClick={()=>toggle(question.qno)}>
-                         <span >{question.qno}.&nbsp;&nbsp;&nbsp;</span>
 
-                         <span><MathContent content={question.content} /></span>
-                         </div>
+                     <div className={`flex  text-base md:text-lg  justify-between `} >
+
+                        <div className=" flex flex-col ">
+
+                            <div className="flex " onClick={()=>toggle(question.qno)}>
+                            <span >{question.qno}.&nbsp;&nbsp;&nbsp;</span>
+                            <MathContent content={question.content} />   
+                            </div>
+
                          {
                             question.type==='image' &&(
                                 <div className="self-center">
@@ -130,14 +139,33 @@ return(
                             </div>
                             )
                          }
-                       </span>
-                       {/* <div><ChevronDown className={`transition-transform duration-300 ${open[question.qno] ? 'rotate-180 ' : ''}`} /></div> */}
+                       </div>
+                           
+                         {role==='admin' &&
+                            (
+                                <div  className="ml-auto" >
+                                    <div className="flex  gap-5 ">
+                                        <button className="flex gap-1.5 shadow-[0_0_10px_rgba(0,0,0,0.5)] 
+                                        px-3 py-2 rounded cursor-pointer" onClick={()=>edittoggle(question.qno)}><span>✏️</span><span>edit</span> </button>
+                                        <button className="flex gap-1.5  shadow-[0_0_10px_rgba(0,0,0,0.5)] 
+                                        px-3 py-2 rounded  cursor-pointer" onClick={() => handleSave(question.qno)}><span>💾</span><span>save</span></button>
+                                    </div>
+                                    
+                                        <div
+                                  id={`editorjs-${children.coursecode}${children.year}${question.qno}`}  // unique id 
+                                  ref={() => initEditor(question.qno)} // init when div appears
+                                  className={edit[question.qno] ? 'block' : 'hidden'}
+                                />
+                                
+                              </div>
+                             )
+                          } 
                      </div>
                         
                       {role==='admin' &&
                       everOpened[question.qno] &&
                     (
-                                <div  className={open[question.qno] ? 'block' : 'hidden'}>
+                                <div  className={`${open[question.qno] ? 'block' : 'hidden'} mt-5`}>
                                     <div className="flex justify-end gap-5 ">
                                         <button className="flex gap-1.5 bg-[#3b63ff] shadow-[0_0_10px_rgba(0,0,0,0.5)] 
                                         px-3 py-2 rounded text-white cursor-pointer" onClick={()=>edittoggle(question.qno)}><span>✏️</span><span>edit</span> </button>
@@ -158,10 +186,14 @@ return(
                         
                         {(role==='user' || edit[question.qno]===false)  && open[question.qno] &&
                         (
+
                                 <div  className="text-center align-center overflow-x-auto">
-                                        {!answers[question.qno-1] && <div>notes will be added</div>}
-                                         {answers[question.qno-1]?.answer?.map((ans,i)=>
+                                
+                                  
+                                        {!match && <div>notes will be added</div>}
+                                         {match?.answer.map((ans,i)=>
                                          {
+
                                            if (ans.type==="image") 
                                              return <img src={ans.data.file.url} alt={ans.data.file.caption} key={i}/>;
                                            else if(ans.type==='table')

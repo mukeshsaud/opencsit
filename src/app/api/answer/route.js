@@ -28,7 +28,7 @@ export async function POST(req){
       target: answers.questionid,
       set:{answer:blocks}
    })
-   revalidateTag(`answerbyyear-${coursecode}-${year}`);
+   revalidateTag(`answerbyyear-${coursecode}-${year}`,"max");
    return Response.json({sucess:resonsefromdb});}
    catch(e){
     return Response.json({error:e.message})

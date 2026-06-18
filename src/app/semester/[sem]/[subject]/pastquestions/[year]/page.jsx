@@ -18,7 +18,7 @@ const {sem,subject,year}=await params;
     const user=await getUser();
 
       const answers= await getAnswerByYear({coursecode:questions.code,year:year});
-        console.log(answers)
+        console.log(answers,'pyqpage answerby year');
  
     return(<>
         <PyqContent questions={questionByyear[year]} children={{coursecode:questions.code,title:questions.title ,sem:sem,year:year}} role={user?.role}  answers={answers}/>
