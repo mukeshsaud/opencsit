@@ -3,11 +3,13 @@ import Image from "next/image"
 import { MdOutlinePerson2 } from "react-icons/md";
 import { useState,useRef, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 
 export default function HeaderClient({semesters}){
     const[clicked,setClicked]=useState(false);
     const dropDownRef=useRef(null)
+    const pathname=usePathname();
 
          useEffect(()=>{ 
                   function handleClickedOutside(event) {
@@ -31,16 +33,19 @@ export default function HeaderClient({semesters}){
     function handleClick(e) {
         setClicked((prev)=>!prev)
     }
+    function handleLogin(){
+        searchParams.set("callback",pathname);
+
+    }
  
    
     return(<div>
         <div className="flex  h-8 md:h-10 lg:h-15 w-full items-center justify-between   pl-1 md:pl-5 lg:pl-15 pr-1 md:pr-5 lg:pr-15">
             <Link className="flex items-center cursor-pointer" href="/">
-                <Image src="/headerlogo1.png" alt="" height={20} width={100} priority className="md:w-12 md:h-8 lg:w-20 lg:h-12 hidden md:block "/>
                 <div className="text-[#3b63ff] flex flex-col w-10px">
                     <span className={`font-black text-[10px] md:text-base lg:text-2xl `}>Opencsit</span>
                     <span className={`font-antic font-black text-[7px] md:text-xs lg:text-base whitespace-nowrap `}>
-                    FREE FOREVERs
+                    FREE FOREVER
                     </span>
                 </div>
             </Link>
@@ -76,7 +81,7 @@ export default function HeaderClient({semesters}){
                 Notices</div>
                 
             </div>
-
+                    <Link href={`/login?callback=${pathname}`} onClick={handleLogin}>login</Link>
             <div className="flex  rounded  px-1  text-xs  md:text-base lg:text-xl lg py-1 md:px-5 lg:px-4 md:py-1 lg:py-2 hover:text-[#0088FF] cursor-pointer">
                 <MdOutlinePerson2  className="text-base md:text-2xl lg:text-3xl"/>
                <span>Account</span> </div>

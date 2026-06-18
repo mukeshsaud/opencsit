@@ -1,6 +1,6 @@
 
 import { Many, One, relations,sql } from "drizzle-orm";
-import { integer, pgEnum, pgTable, serial, text, varchar,check } from "drizzle-orm/pg-core";
+import { integer, pgEnum, pgTable, serial, text, varchar,check,jsonb } from "drizzle-orm/pg-core";
 
 
 
@@ -40,6 +40,15 @@ hours:integer('hours'),
 description:text('description')
 })
 
+export const roleEnum=pgEnum('role',['user','admin']);
+
+export const userdetails=pgTable("userdetails",{
+    username:varchar('username').unique().notNull().primaryKey(),
+    password:varchar('password').notNull(),
+    semester:integer('semester').notNull(),
+    role:roleEnum('role').default('user')
+})
+
 export const typeEnum=pgEnum('type',['text','image']);
 
 export const questions=pgTable("questions",
@@ -57,8 +66,12 @@ export const questions=pgTable("questions",
 )
 
 
+export const answers=pgTable('answers',{
+    id: serial('id').primaryKey(),
+    questionid: integer('questionid').notNull().unique().references(()=> questions.id,{onDelete:'cascade'}) ,
+    answer: jsonb('answer').notNull()
+})
  
-
 
 export const syllabusRelations= relations(syllabus,({many,one})=>({
 chapters:many(chapters),
@@ -99,3 +112,9 @@ subjects:one(subjects,
 
 }))
 
+export const answerRelations= relations(answers,({one})=>({
+questions:one(questions,{
+    fields:[answers.questionid], //fk
+    references:[questions.id] //pk
+})
+}))
