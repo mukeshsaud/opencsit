@@ -3,7 +3,7 @@ import { ChevronDown } from "lucide-react";
 import { useState,useEffect,useRef } from "react";
 import MathContent from "./MathContent";
 import Image from "next/image";
-import { getEditorConfig } from "../../editorConfig";
+import { getEditorConfig,getQnEditorConfig } from "../../editorConfig";
 
 
 
@@ -14,6 +14,9 @@ export default function PyqContent({questions,children,role,answers}){
     const [edit,setEdit]=useState(
         ()=>Object.fromEntries(questions.map(q=>[q.qno,false]))
     );
+     const [editQuestion,setEditQuestion]=useState(
+        ()=>Object.fromEntries(questions.map(q=>[q.qno,false]))
+    );
    
     const toggle=(qno)=>{
            setEverOpened(prev => ({ ...prev, [qno]: true })); // mark as ever opened, never reset
@@ -22,14 +25,18 @@ export default function PyqContent({questions,children,role,answers}){
     }
     const edittoggle=(qno)=>{
          setEdit(prev=>({...prev,[qno]:!prev[qno]}));
-
     }
+    const editQuestioToogle=(qno)=>{
+        setEditQuestion(prev=>({...prev,[qno]:!prev[qno]}))
+    }
+
     const editorsRef = useRef({}); 
+    const qneditorsRef = useRef({}); 
 {/* <PyqContent questions={questionByyear[year]} children={{coursecode:questions.code,title:questions.title ,sem:sem,year:year}}/> */}
 
-    const initEditor = async (qno) => {
+    const initEditorAnswer = async (qno) => {
 
-        if (editorsRef.current[qno]) return; // ← already exists, user can still type/edit
+        if (editorsRef.current[qno]) return; // already exists, user can still type/edit
 
         editorsRef.current[qno] = true;
 
@@ -39,7 +46,7 @@ export default function PyqContent({questions,children,role,answers}){
     console.log(existingData)
 
     editorsRef.current[qno] = new EditorJS({
-      holder: `editorjs-${children.coursecode}${children.year}${qno}`, // unique id per question
+      holder: `editorjsans-${children.coursecode}${children.year}${qno}`, // unique id per question
       placeholder: 'Start writing...',
       data: {blocks:existingData}, // {data:{blocks: [{ type: 'paragraph', data: { text: 'sfas' } }]}}
       ...config,
@@ -59,13 +66,47 @@ const handleSave = async (qno) => {
    
   const data=await res.json();
   
-
   console.log(data,"data from pyqcontentsave");
 
   console.log(`course code: ${children.coursecode} year: ${children.year} Q${qno} data:`, blocks,typeof(blocks),'s');
  
 };
 
+const initEditorQuestion=async(qno,content,src)=>{
+    if (qneditorsRef.current[qno]) return; // already exists, user can still type/edit
+     qneditorsRef.current[qno] = true;
+
+     const EditorJS=(await import ('@editorjs/editorjs')).default;
+      const config=await getQnEditorConfig({data:{slug:'question',year:children.year,coursecode:children.coursecode,qno,sem:children.sem}});
+    //   const findQuestionContent=questions.find((question)=> question.qno===qno);
+    //   console.log(findQuestionContent);
+    
+
+    console.log(src);
+    qneditorsRef.current[qno] = new EditorJS({
+      holder: `editorjsqn-${children.coursecode}${children.year}${qno}`, // unique id per question
+      placeholder: 'edit question...',
+    data:{blocks:
+        [{type:'paragraph',data:{text:content}}
+        ,{type:'image',data:{file:{url:src}}}
+        ]}, // {data:{blocks: [{ type: 'paragraph', data: { text: 'sfas' } }]}}d
+      ...config,
+    });
+};
+
+const handleQuestionSave= async (qno)=>{
+    const {blocks}=await qneditorsRef.current[qno].save();
+        console.log(blocks,"handleQuestionSave");
+   const res= await fetch("/api/question",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({blocks,coursecode:children.coursecode,year:children.year,qno:qno})
+   })
+
+    const data=await res.json();
+    console.log(data);
+
+}
 return(
     <>
 <div key={children.code} className='flex flex-col gap-7 p-5'>
@@ -123,9 +164,9 @@ return(
 
                      <div className={`flex  text-base md:text-lg  justify-between `} >
 
-                        <div className=" flex flex-col ">
+                        <div className=" flex flex-col " onClick={()=>toggle(question.qno)}>
 
-                            <div className="flex " onClick={()=>toggle(question.qno)}>
+                            <div className="flex " >
                             <span >{question.qno}.&nbsp;&nbsp;&nbsp;</span>
                             <MathContent content={question.content} />   
                             </div>
@@ -139,22 +180,22 @@ return(
                             </div>
                             )
                          }
+
                        </div>
-                           
+                         {/*  edit question admin access */}
                          {role==='admin' &&
                             (
                                 <div  className="ml-auto" >
                                     <div className="flex  gap-5 ">
                                         <button className="flex gap-1.5 shadow-[0_0_10px_rgba(0,0,0,0.5)] 
-                                        px-3 py-2 rounded cursor-pointer" onClick={()=>edittoggle(question.qno)}><span>✏️</span><span>edit</span> </button>
+                                        px-3 py-2 rounded cursor-pointer" onClick={()=>editQuestioToogle(question.qno)}><span>✏️</span><span>edit</span> </button>
                                         <button className="flex gap-1.5  shadow-[0_0_10px_rgba(0,0,0,0.5)] 
-                                        px-3 py-2 rounded  cursor-pointer" onClick={() => handleSave(question.qno)}><span>💾</span><span>save</span></button>
+                                        px-3 py-2 rounded  cursor-pointer" onClick={() => handleQuestionSave(question.qno)}><span>💾</span><span>save</span></button>
                                     </div>
                                     
                                         <div
-                                  id={`editorjs-${children.coursecode}${children.year}${question.qno}`}  // unique id 
-                                  ref={() => initEditor(question.qno)} // init when div appears
-                                  className={edit[question.qno] ? 'block' : 'hidden'}
+                                  id={`editorjsqn-${children.coursecode}${children.year}${question.qno}`}  // unique id 
+                                  ref={() => initEditorQuestion(question.qno,question.content,question.src)} // init when div appears
                                 />
                                 
                               </div>
@@ -174,8 +215,8 @@ return(
                                     </div>
                                     
                                         <div
-                                  id={`editorjs-${children.coursecode}${children.year}${question.qno}`}  // unique id 
-                                  ref={() => initEditor(question.qno)} // init when div appears
+                                  id={`editorjsans-${children.coursecode}${children.year}${question.qno}`}  // unique id 
+                                  ref={() => initEditorAnswer(question.qno)} // init when div appears
                                   className={edit[question.qno] ? 'block' : 'hidden'}
                                 />
                                 

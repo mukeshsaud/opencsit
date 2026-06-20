@@ -8,8 +8,6 @@ export const getEditorConfig =async ({data})=> {
   const ColorPicker=(await import('editorjs-color-picker')).default;
    const Marker=(await import('@editorjs/marker')).default;
 
-;
-
   return{
   tools: {
     header:{
@@ -44,5 +42,26 @@ export const getEditorConfig =async ({data})=> {
       class: ColorPicker,
       }
 
+  }
+};}
+
+export const getQnEditorConfig =async ({data})=> {
+  const ImageTool = (await import('@editorjs/image')).default;
+   const InlineCode = (await import('@editorjs/inline-code')).default;
+   
+  return{
+  tools: {
+    image: {
+      class: ImageTool,
+      config: {
+        endpoints: {
+          byFile: `http://localhost:3000/api/uploadfile?slug=${data.slug}&sem=${data.sem}&coursecode=${data.coursecode}&year=${data.year}&qno=${data.qno}`, //  backend file uploader endpoint
+      },
+    }},
+
+    inlineCode: {
+  class: InlineCode,
+  shortcut: 'CMD+SHIFT+C',
+},
   }
 };}

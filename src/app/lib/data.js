@@ -42,3 +42,16 @@ export const getAllQuestions=unstable_cache(async(coursename)=>{
      })
 
 },['allQuestions'],{revalidate:false})
+
+export const getQuestionBy=unstable_cache(async(coursename)=>{
+     return await db.query.subjects.findFirst({
+        where:eq(sql`lower(${subjects.title})`,coursename),
+        with:{
+            questions:{
+                orderBy:(questions,{asc})=>[asc(questions.year),asc(questions.qno)],
+            }
+        }
+
+     })
+
+},['allQuestions'],{revalidate:false})
