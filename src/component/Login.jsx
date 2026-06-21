@@ -22,6 +22,7 @@ export default function Login() {
             body:JSON.stringify({username,password})
         })
         const data=res.json();
+        console.log(data);
         router.push(callback);
     }
 

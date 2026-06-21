@@ -1,15 +1,15 @@
 'use client';
-import { ChevronDown } from "lucide-react";
 import { useState,useEffect,useRef } from "react";
 import MathContent from "./MathContent";
 import Image from "next/image";
 import { getEditorConfig,getQnEditorConfig } from "../../editorConfig";
+import { Eye, EyeOff } from "lucide-react";
 
 
 
 export default function PyqContent({questions,children,role,answers}){
-    const [open,setOpen]=useState({});
-    const [everOpened, setEverOpened] = useState({});
+    const [open,setOpen]=useState( ()=>Object.fromEntries(questions.map(q=>[q.qno,false])));
+    const [everOpened, setEverOpened] = useState( ()=>Object.fromEntries(questions.map(q=>[q.qno,false])));
 
     const [edit,setEdit]=useState(
         ()=>Object.fromEntries(questions.map(q=>[q.qno,false]))
@@ -17,11 +17,11 @@ export default function PyqContent({questions,children,role,answers}){
      const [editQuestion,setEditQuestion]=useState(
         ()=>Object.fromEntries(questions.map(q=>[q.qno,false]))
     );
+       const [showAns,setShowAns]=useState(false);
    
     const toggle=(qno)=>{
            setEverOpened(prev => ({ ...prev, [qno]: true })); // mark as ever opened, never reset
-             setOpen(prev=>({...prev,[qno]:!prev[qno]}));
-            
+             setOpen(prev=>({...prev,[qno]:!prev[qno]}));   
     }
     const edittoggle=(qno)=>{
          setEdit(prev=>({...prev,[qno]:!prev[qno]}));
@@ -109,7 +109,7 @@ const handleQuestionSave= async (qno)=>{
 }
 return(
     <>
-<div key={children.code} className='flex flex-col gap-7 p-5'>
+<div key={children.code} className='flex flex-col gap-7 p-5 '>
          <div className='text-lg md:text-2xl font-bold text-center'>
           <p >Tribhuvan University</p>
           <p>Institute of Science and Technology</p>
@@ -140,8 +140,34 @@ return(
         </div >
         </div>
         
-         
-             <div className='  text-lg '>Candidates are required to give their answers in their own words as for as practicable.</div>
+                <div className="flex justify-between items-center">
+             <span className='  text-lg '>
+                Candidates are required to give their answers in their own words as for as practicable.
+                </span>
+              
+               <span className=" bg-[#3b63ff] shadow-[0_0_10px_rgba(0,0,0,0.5)]  px-3  p-2  h-10 w-fit rounded text-white cursor-pointer " 
+               onClick={()=>{setShowAns(!showAns);
+                if(!showAns){
+                    console.log(showAns);
+                setEverOpened(prev=>Object.fromEntries(Object.keys(prev).map(key=>{return [key,true]})));
+                    setOpen(prev=>Object.fromEntries(Object.keys(prev).map(key=>[key,true])));
+                }
+                else
+                {
+                     setEverOpened(prev=>Object.fromEntries(Object.keys(prev).map(key=>[key,false])));
+                    setOpen(prev=>Object.fromEntries(Object.keys(prev).map(key=>[key,false])));
+                }
+               }
+               }
+               
+               >
+               {showAns ?
+                (<span className="flex items-center  "><span>Hide all answers &nbsp;</span> <EyeOff size={18}/></span>)
+                :
+                (<span className="flex items-center "><span>Show all answers &nbsp;</span><Eye size={18}/></span>)}
+               </span>
+                
+                </div>
         
 
          <div className='flex flex-col gap-3'>
@@ -153,7 +179,7 @@ return(
              <div className='flex flex-col gap-7 '>
                  {questions.map((question)=>{
                 const match=answers.find((q)=>q.qno===question.qno);
-                return( <div key={question.qno} className=' cursor-pointer    ' >
+                return( <div key={question.qno} className=' cursor-pointer     ' >
 
                     {question.qno==4 &&
                      <div className="pb-5 ">
@@ -162,20 +188,32 @@ return(
                         </div>
                         }
 
-                     <div className={`flex  text-base md:text-lg  justify-between `} >
+                     <div className={`flex  text-base md:text-lg  justify-between   `} >
 
-                        <div className=" flex flex-col " onClick={()=>toggle(question.qno)}>
 
-                            <div className="flex " >
+                        <div className={`  flex flex-col`} onClick={()=>toggle(question.qno)}>
+
+                            <div className="flex" >
                             <span >{question.qno}.&nbsp;&nbsp;&nbsp;</span>
-                            <MathContent content={question.content} />   
+                            <span className={` ${editQuestion[question.qno] ? 'hidden' : 'block'}`}> <MathContent content={question.content}  />  </span>
+                           
+                             { role==='admin' &&
+                            (
+                       
+                           <div
+                                  id={`editorjsqn-${children.coursecode}${children.year}${question.qno}`}  // unique id 
+                                  ref={() => initEditorQuestion(question.qno,question.content,question.src)} // init when div appears
+                                  className={`${editQuestion[question.qno] ? 'block' : 'hidden'} `}
+                                />
+                    
+                            )}
                             </div>
 
                          {
                             question.type==='image' &&(
                                 <div className="self-center">
                                     <br/>
-                            <Image src={question.src} width={300} height={250} alt='image'/>
+                            <Image src={question.src} width={300} height={250} alt='image'  className={` ${editQuestion[question.qno] ? 'hidden' : 'block'}`}/>
                            
                             </div>
                             )
@@ -185,7 +223,7 @@ return(
                          {/*  edit question admin access */}
                          {role==='admin' &&
                             (
-                                <div  className="ml-auto" >
+                                <div  className= 'ml-auto' >
                                     <div className="flex  gap-5 ">
                                         <button className="flex gap-1.5 shadow-[0_0_10px_rgba(0,0,0,0.5)] 
                                         px-3 py-2 rounded cursor-pointer" onClick={()=>editQuestioToogle(question.qno)}><span>✏️</span><span>edit</span> </button>
@@ -193,10 +231,6 @@ return(
                                         px-3 py-2 rounded  cursor-pointer" onClick={() => handleQuestionSave(question.qno)}><span>💾</span><span>save</span></button>
                                     </div>
                                     
-                                        <div
-                                  id={`editorjsqn-${children.coursecode}${children.year}${question.qno}`}  // unique id 
-                                  ref={() => initEditorQuestion(question.qno,question.content,question.src)} // init when div appears
-                                />
                                 
                               </div>
                              )
@@ -223,22 +257,23 @@ return(
                               </div>
                     )
                         } 
-
+                            
                         
                         {(role==='user' || edit[question.qno]===false)  && open[question.qno] &&
                         (
-
-                                <div  className="text-center align-center overflow-x-auto">
+                               
+                                <div  className="text-center align-center overflow-x-auto shadow-[0_0_20px_rgba(200,195,180,0.8)]  mt-5 ">
                                 
-                                  
-                                        {!match && <div>notes will be added</div>}
+                                        {!match && <div className="  border-l-4 border-[#c4b5fd] px-4  py-4 text-start   ">notes will be added soon ....</div>}
+                                         
+                                         <div className="border-l-4 border-[#c4b5fd] px-4  py-4 text-start flex flex-col items-center ">
                                          {match?.answer.map((ans,i)=>
                                          {
 
                                            if (ans.type==="image") 
-                                             return <img src={ans.data.file.url} alt={ans.data.file.caption} key={i}/>;
+                                             return <img src={ans.data.file.url} alt={ans.data.file.caption} key={i} className=""/>;
                                            else if(ans.type==='table')
-                                            return <table key={i} className="border-sky-100 border-collapse mx-auto ">
+                                            return <table key={i} className="border-sky-100 border-collapse items-center ">
                                                      {ans.data.withHeadings ?
                                                      <thead >
                                                         <tr >
@@ -267,21 +302,23 @@ return(
 
                                            else if(ans.type==='header'){
                                             const HeadingTag=`h${ans.data.level}`;
-                                            return <HeadingTag  key={i} >{ans.data.text}</HeadingTag>;}
+                                            const sizeMap = { 1: 'text-4xl', 2: 'text-3xl', 3: 'text-2xl', 4: 'text-xl'}
+                                            return <HeadingTag  key={i} className={`font-bold ${sizeMap[ans.data.level]}`}>{ans.data.text}</HeadingTag>;}
 
                                          else if (ans.type==='paragraph')
                                            return <div key={i} 
-                                         dangerouslySetInnerHTML={{__html:ans.data.text}} className="text-left"/>;
+                                         dangerouslySetInnerHTML={{__html:ans.data.text}} className="text-left self-start"/>;
 
                                          else 
                                            return <div key={i} 
                                          dangerouslySetInnerHTML={{__html:ans.data.text}}/>;
                                          }
                                         )}
+                                        </div>
                               </div>
                         )
                     }
-
+                    <hr className="opacity-30 mt-2"/>
                      </div>
                     )})}
                  </div>

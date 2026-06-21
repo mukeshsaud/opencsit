@@ -1,3 +1,5 @@
+import FontSizeTool from './editorFontSize'; // adjust path
+import BgColorTool from './editorBg';
 
 
 export const getEditorConfig =async ({data})=> {
@@ -7,6 +9,9 @@ export const getEditorConfig =async ({data})=> {
   const Table = (await import('@editorjs/table')).default;
   const ColorPicker=(await import('editorjs-color-picker')).default;
    const Marker=(await import('@editorjs/marker')).default;
+  
+   const Paragraph=(await import('@editorjs/paragraph')).default;
+   
 
   return{
   tools: {
@@ -31,6 +36,27 @@ export const getEditorConfig =async ({data})=> {
   class: InlineCode,
   shortcut: 'CMD+SHIFT+C',
 },
+     paragraph: {
+      class: Paragraph,
+      inlineToolbar: true,
+    },
+    fontSize: {
+    class: FontSizeTool,
+    config: {
+      fontSizes: [
+        { size: '12px', label: 'Small' },
+        { size: '14px', label: 'Normal' },
+        { size: '16px', label: 'Medium' },
+        { size: '20px', label: 'Large' },
+        { size: '24px', label: 'XL' },
+        { size: '32px', label: 'XXL' },
+      ]
+    }
+  },
+  bgColor: {
+    class: BgColorTool,
+  },
+
     table: Table,
 
     Marker: {

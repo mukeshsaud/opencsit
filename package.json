@@ -19,6 +19,7 @@
     "bcryptjs": "^3.0.3",
     "drizzle-orm": "^0.45.2",
     "editorjs-color-picker": "^1.0.8",
+    "editorjs-inline-font-size-tool": "^1.0.1",
     "jose": "^6.2.3",
     "jsonwebtoken": "^9.0.3",
     "katex": "^0.16.47",
