@@ -71,6 +71,12 @@ export const answers=pgTable('answers',{
     questionid: integer('questionid').notNull().unique().references(()=> questions.id,{onDelete:'cascade'}) ,
     answer: jsonb('answer').notNull()
 })
+
+export const notes=pgTable('notes',{
+    id: serial('id').primaryKey(),
+    chapterid:integer('chapterid').notNull().unique().references(()=>chapters.id,{onDelete:'cascade'}),
+    note:jsonb('note').notNull()
+})
  
 
 export const syllabusRelations= relations(syllabus,({many,one})=>({
@@ -86,7 +92,12 @@ export const chaptersRelations= relations(chapters,({one})=>({
     syllabus: one(syllabus,{
         fields:[chapters.syllabusidfk], //fk
         references:[syllabus.id]        //pk
-    })}))
+        }),
+    notes:one(notes,{
+        fields:[chapters.id], //pk on chapters
+        references:[notes.chapterId],  //fk  on notes
+    })
+}))
 
 export const subjectRelations= relations(subjects,({one,many})=>({
 syllabus:one(syllabus),

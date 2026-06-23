@@ -14,7 +14,7 @@ import { getUser } from "@/app/lib/getUser";
 export default async function layout({children,params}){
     const {sem,subject}=await params;
     const user= await getUser();
-    console.log("user role",user.role)
+   
    
     
     const filteredsubject=`${subject.replaceAll('-',' ')}`
@@ -24,7 +24,6 @@ export default async function layout({children,params}){
 
     if(questions.title.toLowerCase()!==filteredsubject)
         notFound();
-     console.log("user role",user.role ,typeof(years[0]),years[0],questions.code)
     return(
         <>
 

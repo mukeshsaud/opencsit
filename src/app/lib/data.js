@@ -1,7 +1,7 @@
 import { revalidatePath, unstable_cache } from "next/cache";
 import {db} from "./db"
-import { questions, semesters,subjects } from "./schema";
-import { eq, sql } from "drizzle-orm";
+import { questions,syllabus, semesters,subjects,chapters,notes } from "./schema";
+import { eq, sql,and } from "drizzle-orm";
 
 export const getAllData=unstable_cache(async()=>
     {
@@ -55,3 +55,22 @@ export const getQuestionBy=unstable_cache(async(coursename)=>{
      })
 
 },['allQuestions'],{revalidate:false})
+
+export const getNotes = unstable_cache(async (coursecode, unit) => {
+  const [s] = await db.select().from(syllabus).where(
+    eq(syllabus.subjectcodefk, coursecode.coursecode)
+  );
+  const [chapter] = await db.select().from(chapters).where(
+    and(
+      eq(chapters.syllabusidfk, s.id),
+      eq(chapters.unit, unit)
+    )
+  );
+
+ return await db.query.notes.findFirst({
+    where: eq(notes.chapterid, chapter.id)
+  });
+  
+  
+
+}, ['notes'], { revalidate: false });

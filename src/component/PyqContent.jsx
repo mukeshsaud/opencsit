@@ -43,7 +43,7 @@ export default function PyqContent({questions,children,role,answers}){
     const EditorJS=(await import('@editorjs/editorjs')).default;
     const config=await getEditorConfig({data:{slug:'answer',year:children.year,coursecode:children.coursecode,qno,sem:children.sem}});
     const existingData=answers.filter((q)=>q.qno===qno)[0]?.answer;
-    console.log(existingData)
+    console.log(existingData,'edataans')
 
     editorsRef.current[qno] = new EditorJS({
       holder: `editorjsans-${children.coursecode}${children.year}${qno}`, // unique id per question
@@ -81,8 +81,8 @@ const initEditorQuestion=async(qno,content,src)=>{
     //   const findQuestionContent=questions.find((question)=> question.qno===qno);
     //   console.log(findQuestionContent);
     
+    if(content==='dummy question') content='';
 
-    console.log(src);
     qneditorsRef.current[qno] = new EditorJS({
       holder: `editorjsqn-${children.coursecode}${children.year}${qno}`, // unique id per question
       placeholder: 'edit question...',
@@ -191,11 +191,11 @@ return(
                      <div className={`flex  text-base md:text-lg  justify-between   `} >
 
 
-                        <div className={`  flex flex-col`} onClick={()=>toggle(question.qno)}>
+                        <div className={`  flex flex-col`} >
 
                             <div className="flex" >
-                            <span >{question.qno}.&nbsp;&nbsp;&nbsp;</span>
-                            <span className={` ${editQuestion[question.qno] ? 'hidden' : 'block'}`}> <MathContent content={question.content}  />  </span>
+                            <span onClick={()=>toggle(question.qno)}>{question.qno}.&nbsp;&nbsp;&nbsp;</span>
+                            <span className={` ${editQuestion[question.qno] ? 'hidden' : 'block'}`} onClick={()=>toggle(question.qno)}> <MathContent content={question.content}  />  </span>
                            
                              { role==='admin' &&
                             (
@@ -213,7 +213,7 @@ return(
                             question.type==='image' &&(
                                 <div className="self-center">
                                     <br/>
-                            <Image src={question.src} width={300} height={250} alt='image'  className={` ${editQuestion[question.qno] ? 'hidden' : 'block'}`}/>
+                            <Image src={question.src} width={300} height={250} alt='image'  className={` ${editQuestion[question.qno] ? 'hidden' : 'block'}`} onClick={()=>toggle(question.qno)}/>
                            
                             </div>
                             )

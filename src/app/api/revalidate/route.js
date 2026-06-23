@@ -10,6 +10,7 @@ export async function GET(request){
     revalidateTag('all-semesters-data');
     revalidateTag('subjectChapters');
     revalidateTag('allQuestions');
+      revalidateTag('questionby');
     return Response.json({message:'revalidated'});
     
 }

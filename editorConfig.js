@@ -8,9 +8,7 @@ export const getEditorConfig =async ({data})=> {
   const InlineCode = (await import('@editorjs/inline-code')).default;
   const Table = (await import('@editorjs/table')).default;
   const ColorPicker=(await import('editorjs-color-picker')).default;
-   const Marker=(await import('@editorjs/marker')).default;
-  
-   const Paragraph=(await import('@editorjs/paragraph')).default;
+  const Paragraph=(await import('@editorjs/paragraph')).default;
    
 
   return{
@@ -58,11 +56,6 @@ export const getEditorConfig =async ({data})=> {
   },
 
     table: Table,
-
-    Marker: {
-      class: Marker,
-      shortcut: 'CMD+SHIFT+M',
-    },
 
     ColorPicker: {
       class: ColorPicker,

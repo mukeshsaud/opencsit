@@ -25,7 +25,7 @@ export async function POST(req){
          uploadDir=path.join(process.cwd(),'public','questionsImgs',`${sem}`,`${coursecode}`,`${year}`,`${qno}`); 
     }
     else if(slug==='note'){
-     uploadDir=path.join(process.cwd(),'public','notesImgs',`${sem}`,`${coursecode}`,`${year}`); //year is refrenced to unit for notes
+     uploadDir=path.join(process.cwd(),'public','notesImgs',`${sem}`,`${coursecode}`,`${qno}`); //qno is refrenced to unit for notes
     }
     await mkdir(uploadDir, { recursive: true }); //create dir if not exists
 
@@ -38,7 +38,7 @@ export async function POST(req){
          url=`/${slug}sImgs/${sem}/${coursecode}/${year}/${qno}/${fileName}`;
         
         else if(slug==='note'){
-            url=`/${slug}sImgs/${sem}/${coursecode}/${year}/${fileName}`; //year is unit for notes
+            url=`/${slug}sImgs/${sem}/${coursecode}/${qno}/${fileName}`; //qno is unit for notes
         }
 
     return Response.json({

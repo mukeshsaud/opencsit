@@ -9,7 +9,8 @@ export default function PyqYear({years,params,role}){
         const [question,setQuestion]=useState(false)
         const [newYear,setNewYear]=useState(null);
         const questionSubmit=async()=>{
-            console.log(newYear);
+            const newyearexist=years.find(year=>year==newYear);
+            if(!newyearexist && Number.isInteger(Number(newYear)) && newYear.length===4 ){
                 const res= await fetch("/api/newquestionpaper",{
                         method:"POST",
                         headers:{"Content-Type":"application/json"},
@@ -17,6 +18,10 @@ export default function PyqYear({years,params,role}){
                 })
                 const data=await res.json()
                 console.log(data);
+            }
+            else if(newYear.length!==4) console.log("year length is not 4");
+            else if(!Number.isInteger(Number(newYear))) console.log("newYear is either not number or integer");
+            else console.log(`year already exists  ${newyearexist}`);
         }
        
     return(
